@@ -7,6 +7,11 @@ var PreloadState = {
         this.preloadBar.anchor.setTo(0.5);
 
         this.load.setPreloadSprite(this.preloadBar);
+
+        this.game.load.image('blue', 'assets/images/blue.png');
+        this.game.load.image('red', 'assets/images/red.png');
+        this.game.load.image('yellow', 'assets/images/yellow.png');
+        this.game.load.image('green', 'assets/images/green.png');
     },
 
     create: function ()
