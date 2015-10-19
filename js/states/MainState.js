@@ -71,7 +71,10 @@ var MainState = {
 
     tileDown: function (tile, poointer)
     {
-
+        if (this.canMove === true)
+        {
+            this.activeTile1 = tile;
+        }
     },
 
     checkMatch: function ()
