@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(360, 640, Phaser.AUTO);
+var game = new Phaser.Game(600, 600, Phaser.AUTO);
 
 game.state.add('BootState', BootState);
 game.state.add('PreloadState', PreloadState);

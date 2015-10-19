@@ -20,11 +20,11 @@ var MainState = {
         this.tiles = this.game.add.group();
 
         this.tileGrid = [];
-        for (var y = 0; y < 6; ++y)
+        for (var y = 0; y < 8; ++y)
         {
             this.tileGrid[y] = [];
 
-            for (var x = 0; x < 6; ++x)
+            for (var x = 0; x < 9; ++x)
             {
                 this.tileGrid[y][x] = null;
             }
@@ -40,7 +40,7 @@ var MainState = {
     {
         for (var y = 0; y < this.tileGrid.length; ++y)
         {
-            for (var x = 0; x < this.tileGrid.length; ++x)
+            for (var x = 0; x < this.tileGrid[y].length; ++x)
             {
                 this.tileGrid[y][x] = this.addTile(x, y);
             }
