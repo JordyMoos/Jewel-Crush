@@ -74,6 +74,9 @@ var MainState = {
         if (this.canMove === true)
         {
             this.activeTile1 = tile;
+
+            this.startPosX = (tile.x - this.tileWidth / 2) / this.tileWidth;
+            this.startPosY = (tile.y - this.tileHeight / 2) / this.tileHeight;
         }
     },
 
