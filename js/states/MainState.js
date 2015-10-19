@@ -1,5 +1,5 @@
 
-var GameState = {
+var MainState = {
 
     create: function ()
     {
