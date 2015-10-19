@@ -80,6 +80,16 @@ var MainState = {
         }
     },
 
+    swapTiles: function ()
+    {
+        if (this.activeTile1 && this.activeTile2)
+        {
+            var tile1Pos = {
+                x: (this.activeTile1.x - this.tileWidth / 2) / this.tileWidth,
+            };
+        }
+    },
+
     checkMatch: function ()
     {
         console.log('Check match');
@@ -87,6 +97,36 @@ var MainState = {
 
     update: function ()
     {
+        // Check if user is hovering over another tile
+        if (this.activeTile1 && ! this.activeTile2)
+        {
+            var hoverX = this.game.input.x;
+            var hoverY = this.game.input.y;
 
+            var hoverPosX = Math.floor(hoverX / this.tileWidth);
+            var hoverPosY = Math.floor(hoverY / this.tileHeight);
+
+            var difX = (hoverPosX - this.startPosX);
+            var difY = (hoverPosY - this.startPosY);
+
+            // Make sure we are in le bounds of le grid
+            if ( ! (hoverPosY > this.tileGrid[0].length - 1 || hoverPosY < 0)
+                && ! (hoverPosX > this.tileGrid.length - 1 || hoverPosX < 0))
+            {
+                // Check if user dragged far enough for a swap
+                if ((Math.abs(difY) == 1 && difX == 0) || (Math.abs(difX) == 1 && difY == 0))
+                {
+                    this.canMove = false;
+                    this.activeTile2 = this.tileGrid[hoverPosX][hoverPosY];
+                    this.swapTiles();
+
+                    // After the swap check for any matches
+                    this.game.time.events.add(500, function ()
+                        {
+                            this.checkMatch();
+                        }, this);
+                }
+            }
+        }
     },
 };
