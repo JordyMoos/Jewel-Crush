@@ -8,6 +8,7 @@ var MainState = {
             fill: '#ffffff',
         };
         this.debugMessage = this.game.add.text(20, 500, 'Message', style);
+        this.lockStatus = this.game.add.text(20, 530, '', style);
 
         this.game.stage.backgroundColor = '#34495f';
 
@@ -21,6 +22,7 @@ var MainState = {
         this.activeTile1 = null;
         this.activeTile2 = null;
         this.canMove = true;
+        this.lockStatus.text = this.canMove;
         this.tileWidth = this.game.cache.getImage('blue').width;
         this.tileHeight = this.game.cache.getImage('blue').height;
         this.tiles = this.game.add.group();
@@ -67,7 +69,10 @@ var MainState = {
         tile.inputEnabled = true;
         tile.tileType = tileToAdd;
         tile.events.onInputDown.add(this.tileDown, this);
-        tile.userData = x + ':' + y;
+        tile.userData = {
+            x: x,
+            y: y
+        };
 
         this.game.add.tween(tile).to({
                 y: (y * this.tileHeight) + (this.tileHeight / 2) // + ((y + 1) * 10)
@@ -82,7 +87,7 @@ var MainState = {
         {
             this.activeTile1 = tile;
 
-            console.log('Clicked on: ' + tile.userData);
+            console.log('Clicked on: ' + tile.userData.x + ':' + tile.userData.y);
 
             this.startPosX = (tile.x - this.tileWidth / 2) / this.tileWidth;
             this.startPosY = (tile.y - this.tileHeight / 2) / this.tileHeight;
@@ -139,10 +144,7 @@ var MainState = {
             this.game.time.events.add(500, function ()
                 {
                     this.tileUp();
-                    this.game.add.events.add(100, function ()
-                        {
-                            this.checkMatch()();
-                        }, this);
+                    this.checkMatch();
                 }, this);
         }
         else
@@ -153,6 +155,7 @@ var MainState = {
                 {
                     this.tileUp();
                     this.canMove = true;
+                    this.lockStatus.text = this.canMove;
                 }, this);
         }
     },
@@ -169,8 +172,6 @@ var MainState = {
         var matches = [];
         var groups = [];
         var tempArr;
-
-        return matches;
 
         //Check for horizontal matches
         for (var i = 0; i < tileGrid.length; i++)
@@ -265,35 +266,22 @@ var MainState = {
             for (var j = 0; j < tempArr.length; j++)
             {
                 var tile = tempArr[j];
-                var tilePos = this.getTilePos(this.tileGrid, tile);
                 this.tiles.remove(tile);
 
-                // Remove the tile from the grid
-                if (tilePos.x !== false)
-                {
-                    this.tileGrid[tilePos.x][tilePos.y] = null;
-                }
+                var tilePos = tile.userData;
+                this.tileGrid[tilePos.x][tilePos.y] = null;
             }
         }
     },
 
-    getTilePos: function (tileGrid, tile)
+    resetTile: function ()
     {
-        for (var i = 0; i < tileGrid.length; i++)
-        {
-            for (var j = 0; i < tileGrid[i].length; j++)
-            {
-                if (tile === tileGrid[i][j])
-                {
-                    return {
-                        x: i,
-                        y: j,
-                    };
-                }
-            }
-        }
 
-        return false;
+    },
+
+    fillTile: function ()
+    {
+
     },
 
     update: function ()
@@ -310,7 +298,7 @@ var MainState = {
             var difX = Math.abs(hoverPosX - this.startPosX);
             var difY = Math.abs(hoverPosY - this.startPosY);
 
-            this.debugMessage.text = hoverPosX + ':' + hoverPosY + ' ( ' + this.tileGrid[hoverPosX][hoverPosY].userData + ' ) ';
+            this.debugMessage.text = hoverPosX + ':' + hoverPosY + ' ( ' + this.tileGrid[hoverPosX][hoverPosY].userData.x + ':' + this.tileGrid[hoverPosX][hoverPosY].userData.y + ' ) ';
 
             // Make sure we are in le bounds of le grid
             if ( ! (hoverPosY > this.tileGrid[0].length - 1 || hoverPosY < 0)
@@ -320,6 +308,7 @@ var MainState = {
                 if ((difY == 1 && difX == 0) || (difX == 1 && difY == 0))
                 {
                     this.canMove = false;
+                    this.lockStatus.text = this.canMove;
                     this.activeTile2 = this.tileGrid[hoverPosX][hoverPosY];
                     this.swapTiles();
 
