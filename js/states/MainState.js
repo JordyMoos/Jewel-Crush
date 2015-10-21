@@ -116,7 +116,7 @@ var MainState = {
 
     checkMatch: function ()
     {
-        var matches = this.getMatches();
+        var matches = this.getMatches(this.tileGrid);
 
         if (matches.length > 0)
         {
@@ -154,7 +154,7 @@ var MainState = {
         this.activeTile2 = null;
     },
 
-    // Need to redo
+    // Todo
     getMatches: function(tileGrid)
     {
         var matches = [];
@@ -240,6 +240,28 @@ var MainState = {
         }
 
         return matches;
+    },
+
+    // Todo
+    removeTileGroup: function (matches)
+    {
+        for (var i = 0; i < matches.length; i++)
+        {
+            var tempArr = matches[i];
+
+            for (var j = 0; j < tempArr.length; j++)
+            {
+                var tile = tempArr[j];
+                var tilePos = this.getTilePos(this.tileGrid, tile);
+                this.tiles.remove(tile);
+
+                // Remove the tile from the grid
+                if (tilePos.x != -1 && tilePos.y != -1)
+                {
+                    this.tileGrid[tilePos.x][tilePos.y] = null;
+                }
+            }
+        }
     },
 
     update: function ()
