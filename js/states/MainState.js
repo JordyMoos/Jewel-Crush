@@ -14,7 +14,7 @@ var MainState = {
         this.score = 0;
         this.activeTile1 = null;
         this.activeTile2 = null;
-        this.canMove = false;
+        this.canMove = true;
         this.tileWidth = this.game.cache.getImage('blue').width;
         this.tileHeight = this.game.cache.getImage('blue').height;
         this.tiles = this.game.add.group();
@@ -56,14 +56,14 @@ var MainState = {
     {
         var tileToAdd = this.tileTypes[this.random.integerInRange(0, this.tileTypes.length -1)];
 
-        var tile = this.tiles.create((x * this.tileWidth) + (this.tileWidth / 2) + ((x + 1) * 10), 0, tileToAdd);
+        var tile = this.tiles.create((x * this.tileWidth) + (this.tileWidth / 2) /*+ ((x + 1) * 10)*/, 0, tileToAdd);
         tile.anchor.setTo(0.5, 0.5);
         tile.inputEnabled = true;
         tile.tileType = tileToAdd;
         tile.events.onInputDown.add(this.tileDown, this);
 
         this.game.add.tween(tile).to({
-                y: (y * this.tileHeight) + (this.tileHeight / 2) + ((y + 1) * 10)
+                y: (y * this.tileHeight) + (this.tileHeight / 2) // + ((y + 1) * 10)
             }, 500, Phaser.Easing.Linear.In, true);
 
         return tile;
@@ -82,17 +82,42 @@ var MainState = {
 
     swapTiles: function ()
     {
+        console.log('swappie swappie');
         if (this.activeTile1 && this.activeTile2)
         {
             var tile1Pos = {
                 x: (this.activeTile1.x - this.tileWidth / 2) / this.tileWidth,
+                y: (this.activeTile1.y - this.tileHeight / 2) / this.tileHeight,
             };
+            var tile2Pos = {
+                x: (this.activeTile2.x - this.tileWidth / 2) / this.tileWidth,
+                y: (this.activeTile2.y - this.tileHeight / 2) / this.tileHeight,
+            };
+
+            // Swap them on grid
+            this.tileGrid[tile1Pos.x][tile1Pos.y] = this.activeTile2;
+            this.tileGrid[tile2Pos.x][tile2Pos.y] = this.activeTile1;
+
+            // Swap them on screen
+            this.game.add.tween(this.activeTile1)
+                .to({
+                        x: tile2Pos.x * this.tileWidth + (this.tileWidth / 2),
+                        y: tile2Pos.y * this.tileHeight + (this.tileHeight / 2),
+                    }, 200, Phaser.Easing.Linear.In, true);
+            this.game.add.tween(this.activeTile2)
+                .to({
+                        x: tile1Pos.x * this.tileWidth + (this.tileWidth / 2),
+                        y: tile1Pos.y * this.tileHeight + (this.tileHeight / 2),
+                    }, 200, Phaser.Easing.Linear.In, true);
+
+            this.activeTile1 = this.tileGrid[tile1Pos.x][tile1Pos.y];
+            this.activeTile2 = this.tileGrid[tile2Pos.x][tile2Pos.y];
         }
     },
 
     checkMatch: function ()
     {
-        console.log('Check match');
+        
     },
 
     update: function ()
@@ -113,11 +138,13 @@ var MainState = {
             if ( ! (hoverPosY > this.tileGrid[0].length - 1 || hoverPosY < 0)
                 && ! (hoverPosX > this.tileGrid.length - 1 || hoverPosX < 0))
             {
+                console.log(Math.abs(difX) + ' ' + Math.abs(difY));
                 // Check if user dragged far enough for a swap
                 if ((Math.abs(difY) == 1 && difX == 0) || (Math.abs(difX) == 1 && difY == 0))
                 {
+                    console.log('b');
                     this.canMove = false;
-                    this.activeTile2 = this.tileGrid[hoverPosX][hoverPosY];
+                    this.activeTile2 = this.tileGrid[hoverPosY][hoverPosX];
                     this.swapTiles();
 
                     // After the swap check for any matches
