@@ -82,7 +82,6 @@ var MainState = {
 
     swapTiles: function ()
     {
-        console.log('swappie swappie');
         if (this.activeTile1 && this.activeTile2)
         {
             var tile1Pos = {
@@ -117,7 +116,130 @@ var MainState = {
 
     checkMatch: function ()
     {
-        
+        var matches = this.getMatches();
+
+        if (matches.length > 0)
+        {
+            // Remove tiles
+            this.removeTileGroup(matches);
+
+            // Move tiles down
+            this.resetTile();
+            this.fillTile();
+
+            this.game.time.events.add(500, function ()
+                {
+                    this.tileUp();
+                    this.game.add.events.add(100, function ()
+                        {
+                            this.checkMatch()();
+                        }, this);
+                }, this);
+        }
+        else
+        {
+            // No match so swap the tiles back
+            this.swapTiles();
+            this.game.time.events.add(500, function ()
+                {
+                    this.tileUp();
+                    this.canMove = true;
+                }, this);
+        }
+    },
+
+    tileUp: function ()
+    {
+        this.activeTile1 = null;
+        this.activeTile2 = null;
+    },
+
+    // Need to redo
+    getMatches: function(tileGrid)
+    {
+        var matches = [];
+        var groups = [];
+        var tempArr;
+
+        //Check for horizontal matches
+        for (var i = 0; i < tileGrid.length; i++)
+        {
+            tempArr = tileGrid[i];
+            groups = [];
+            for (var j = 0; j < tempArr.length; j++)
+            {
+                if(j < tempArr.length - 2)
+                    if (tileGrid[i][j] && tileGrid[i][j + 1] && tileGrid[i][j + 2])
+                    {
+                        if (tileGrid[i][j].tileType == tileGrid[i][j+1].tileType && tileGrid[i][j+1].tileType == tileGrid[i][j+2].tileType)
+                        {
+                            if (groups.length > 0)
+                            {
+                                if (groups.indexOf(tileGrid[i][j]) == -1)
+                                {
+                                    matches.push(groups);
+                                    groups = [];
+                                }
+                            }
+
+                            if (groups.indexOf(tileGrid[i][j]) == -1)
+                            {
+                                groups.push(tileGrid[i][j]);
+                            }
+                            if (groups.indexOf(tileGrid[i][j+1]) == -1)
+                            {
+                                groups.push(tileGrid[i][j+1]);
+                            }
+                            if (groups.indexOf(tileGrid[i][j+2]) == -1)
+                            {
+                                groups.push(tileGrid[i][j+2]);
+                            }
+                        }
+                    }
+            }
+            if(groups.length > 0) matches.push(groups);
+        }
+
+        //Check for vertical matches
+        for (j = 0; j < tileGrid.length; j++)
+        {
+            tempArr = tileGrid[j];
+            groups = [];
+            for (i = 0; i < tempArr.length; i++)
+            {
+                if(i < tempArr.length - 2)
+                    if (tileGrid[i][j] && tileGrid[i+1][j] && tileGrid[i+2][j])
+                    {
+                        if (tileGrid[i][j].tileType == tileGrid[i+1][j].tileType && tileGrid[i+1][j].tileType == tileGrid[i+2][j].tileType)
+                        {
+                            if (groups.length > 0)
+                            {
+                                if (groups.indexOf(tileGrid[i][j]) == -1)
+                                {
+                                    matches.push(groups);
+                                    groups = [];
+                                }
+                            }
+
+                            if (groups.indexOf(tileGrid[i][j]) == -1)
+                            {
+                                groups.push(tileGrid[i][j]);
+                            }
+                            if (groups.indexOf(tileGrid[i+1][j]) == -1)
+                            {
+                                groups.push(tileGrid[i+1][j]);
+                            }
+                            if (groups.indexOf(tileGrid[i+2][j]) == -1)
+                            {
+                                groups.push(tileGrid[i+2][j]);
+                            }
+                        }
+                    }
+            }
+            if(groups.length > 0) matches.push(groups);
+        }
+
+        return matches;
     },
 
     update: function ()
@@ -138,11 +260,9 @@ var MainState = {
             if ( ! (hoverPosY > this.tileGrid[0].length - 1 || hoverPosY < 0)
                 && ! (hoverPosX > this.tileGrid.length - 1 || hoverPosX < 0))
             {
-                console.log(Math.abs(difX) + ' ' + Math.abs(difY));
                 // Check if user dragged far enough for a swap
                 if ((Math.abs(difY) == 1 && difX == 0) || (Math.abs(difX) == 1 && difY == 0))
                 {
-                    console.log('b');
                     this.canMove = false;
                     this.activeTile2 = this.tileGrid[hoverPosY][hoverPosX];
                     this.swapTiles();
