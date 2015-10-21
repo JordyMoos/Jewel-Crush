@@ -20,11 +20,11 @@ var MainState = {
         this.tiles = this.game.add.group();
 
         this.tileGrid = [];
-        for (var y = 0; y < 8; ++y)
+        for (var y = 0; y < 3; ++y)
         {
             this.tileGrid[y] = [];
 
-            for (var x = 0; x < 9; ++x)
+            for (var x = 0; x < 3; ++x)
             {
                 this.tileGrid[y][x] = null;
             }
@@ -69,7 +69,7 @@ var MainState = {
         return tile;
     },
 
-    tileDown: function (tile, poointer)
+    tileDown: function (tile, pointer)
     {
         if (this.canMove === true)
         {
@@ -207,7 +207,8 @@ var MainState = {
             groups = [];
             for (i = 0; i < tempArr.length; i++)
             {
-                if(i < tempArr.length - 2)
+                if(i < tileGrid.length - 2)
+                {
                     if (tileGrid[i][j] && tileGrid[i+1][j] && tileGrid[i+2][j])
                     {
                         if (tileGrid[i][j].tileType == tileGrid[i+1][j].tileType && tileGrid[i+1][j].tileType == tileGrid[i+2][j].tileType)
@@ -235,6 +236,7 @@ var MainState = {
                             }
                         }
                     }
+                }
             }
             if(groups.length > 0) matches.push(groups);
         }
@@ -256,12 +258,31 @@ var MainState = {
                 this.tiles.remove(tile);
 
                 // Remove the tile from the grid
-                if (tilePos.x != -1 && tilePos.y != -1)
+                if (tilePos.x !== false)
                 {
                     this.tileGrid[tilePos.x][tilePos.y] = null;
                 }
             }
         }
+    },
+
+    getTilePos: function (tileGrid, tile)
+    {
+        for (var i = 0; i < tileGrid.length; i++)
+        {
+            for (var j = 0; i < tileGrid[i].length; j++)
+            {
+                if (tile === tileGrid[i][j])
+                {
+                    return {
+                        x: i,
+                        y: j,
+                    };
+                }
+            }
+        }
+
+        return false;
     },
 
     update: function ()
