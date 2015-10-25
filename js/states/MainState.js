@@ -28,11 +28,11 @@ var MainState = {
         this.tiles = this.game.add.group();
 
         this.tileGrid = [];
-        for (var y = 0; y < 8; ++y)
+        for (var y = 0; y < 3; ++y)
         {
             this.tileGrid[y] = [];
 
-            for (var x = 0; x < 8; ++x)
+            for (var x = 0; x < 3; ++x)
             {
                 this.tileGrid[y][x] = null;
             }
@@ -276,7 +276,26 @@ var MainState = {
 
     resetTile: function ()
     {
+        for (var i = 0; i < this.tileGrid.length; i++)
+        {
+            for (var j = this.tileGrid[i].length - 1; j > 0; j--)
+            {
+                // If space is blank then fall the one above
+                if (this.tileGrid[i][j] === null && this.tileGrid[i][j-1] !== null)
+                {
+                    var tile = this.tileGrid[i][j-1];
+                    this.tileGrid[i][j] = tile;
+                    this.tileGrid[i][j-1] = null;
 
+                    this.game.add.tween(tile).to({
+                            y: (this.tileHeight * j) + (this.tileHeight / 2)
+                        }, 200, Phaser.Easing.Linear.In, true);
+
+                    // Lets do the row again
+                    j = this.tileGrid[i].length;
+                }
+            }
+        }
     },
 
     fillTile: function ()
