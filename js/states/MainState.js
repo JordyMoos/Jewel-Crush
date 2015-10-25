@@ -276,9 +276,9 @@ var MainState = {
 
     resetTile: function ()
     {
-        for (var i = 0; i < this.tileGrid.length; i++)
+        for (var i = 0; i < this.tileGrid.length; ++i)
         {
-            for (var j = this.tileGrid[i].length - 1; j > 0; j--)
+            for (var j = this.tileGrid[i].length - 1; j > 0; --j)
             {
                 // If space is blank then fall the one above
                 if (this.tileGrid[i][j] === null && this.tileGrid[i][j-1] !== null)
@@ -300,7 +300,16 @@ var MainState = {
 
     fillTile: function ()
     {
-
+        for (var i = 0; i < this.tileGrid.length; ++i)
+        {
+            for (var j = 0; j < this.tileGrid[i].length; ++j)
+            {
+                if (this.tileGrid[i][j] === null)
+                {
+                    this.tileGrid[i][j] = this.addTile(i, j);
+                }
+            }
+        }
     },
 
     update: function ()
