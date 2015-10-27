@@ -312,6 +312,19 @@ var MainState = {
         }
     },
 
+    createScore: function ()
+    {
+        var scoreFont = '100px Arial';
+
+        this.scoreLabel = this.game.add.text(
+            (Math.floor(this.tileGrid[0] / 2) * this.tileWidth),
+            this.tileGrid.length * this.tileHeight,
+            '0',
+            {font: scoreFont, fill: '#fff'});
+        this.scoreLabel.anchor.setTo(0.5, 0);
+        this.scoreLabel.align = 'center';
+    },
+
     update: function ()
     {
         // Check if user is hovering over another tile
