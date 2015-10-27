@@ -28,11 +28,11 @@ var MainState = {
         this.tiles = this.game.add.group();
 
         this.tileGrid = [];
-        for (var y = 0; y < 3; ++y)
+        for (var y = 0; y < 5; ++y)
         {
             this.tileGrid[y] = [];
 
-            for (var x = 0; x < 3; ++x)
+            for (var x = 0; x < 5; ++x)
             {
                 this.tileGrid[y][x] = null;
             }
@@ -320,7 +320,7 @@ var MainState = {
         var scoreFont = '100px Arial';
 
         this.scoreLabel = this.game.add.text(
-            (Math.floor(this.tileGrid[0] / 2) * this.tileWidth),
+            (Math.floor(this.tileGrid[0].length / 2) * this.tileWidth),
             this.tileGrid.length * this.tileHeight,
             '0',
             {font: scoreFont, fill: '#fff'});
