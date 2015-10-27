@@ -42,6 +42,7 @@ var MainState = {
         this.random = new Phaser.RandomDataGenerator([seed]);
 
         this.initTiles();
+        this.createScore();
     },
 
     initTiles: function ()
@@ -268,6 +269,8 @@ var MainState = {
                 var tile = tempArr[j];
                 this.tiles.remove(tile);
 
+                this.incrementScore();
+
                 var tilePos = tile.userData;
                 this.tileGrid[tilePos.x][tilePos.y] = null;
             }
@@ -323,6 +326,12 @@ var MainState = {
             {font: scoreFont, fill: '#fff'});
         this.scoreLabel.anchor.setTo(0.5, 0);
         this.scoreLabel.align = 'center';
+    },
+
+    incrementScore: function ()
+    {
+        this.score += 10;
+        this.scoreLabel.text = this.score;
     },
 
     update: function ()
