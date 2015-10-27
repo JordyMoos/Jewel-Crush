@@ -1,4 +1,6 @@
 
+
+var tilegrid;
 var MainState = {
 
     create: function ()
@@ -27,12 +29,12 @@ var MainState = {
         this.tileHeight = this.game.cache.getImage('blue').height;
         this.tiles = this.game.add.group();
 
-        this.tileGrid = [];
-        for (var y = 0; y < 5; ++y)
+        this.tileGrid = tilegrid = [];
+        for (var y = 0; y < 8; ++y)
         {
             this.tileGrid[y] = [];
 
-            for (var x = 0; x < 5; ++x)
+            for (var x = 0; x < 8; ++x)
             {
                 this.tileGrid[y][x] = null;
             }
@@ -111,6 +113,12 @@ var MainState = {
             // Swap them on grid
             this.tileGrid[tile1Pos.x][tile1Pos.y] = this.activeTile2;
             this.tileGrid[tile2Pos.x][tile2Pos.y] = this.activeTile1;
+
+            this.tileGrid[tile1Pos.x][tile1Pos.y].userData.x = tile1Pos.x;
+            this.tileGrid[tile1Pos.x][tile1Pos.y].userData.y = tile1Pos.y;
+
+            this.tileGrid[tile2Pos.x][tile2Pos.y].userData.x = tile2Pos.x;
+            this.tileGrid[tile2Pos.x][tile2Pos.y].userData.y = tile2Pos.y;
 
             // Swap them on screen
             this.game.add.tween(this.activeTile1)
@@ -279,6 +287,7 @@ var MainState = {
 
     resetTile: function ()
     {
+        console.log('Reset tile');
         for (var i = 0; i < this.tileGrid.length; ++i)
         {
             for (var j = this.tileGrid[i].length - 1; j > 0; --j)
@@ -287,6 +296,8 @@ var MainState = {
                 if (this.tileGrid[i][j] === null && this.tileGrid[i][j-1] !== null)
                 {
                     var tile = this.tileGrid[i][j-1];
+                    tile.userData.x = i;
+                    tile.userData.y = j;
                     this.tileGrid[i][j] = tile;
                     this.tileGrid[i][j-1] = null;
 
@@ -372,3 +383,19 @@ var MainState = {
         }
     },
 };
+
+function printWrongTiles()
+{
+    for (var x = 0; x < tilegrid.length; ++x)
+    {
+        for (var y = 0; y < tilegrid.length; ++y)
+        {
+            var sprite = tilegrid[x][y];
+            if (sprite.userData.x !== x || sprite.userData.y !== y)
+            {
+                console.log('Wrong data for ' + x + ',' + y);
+                console.log(sprite.userData);
+            }
+        }
+    }
+}
